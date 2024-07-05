@@ -24,13 +24,11 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter-context',
-    opts = { multiline_threshold = 1, max_lines = 3 },
-    keys = {
-      {
-        '<leader>tc',
-        '<cmd>TSContextToggle<cr>',
-        desc = '[T]oggle [C]ontex',
-      },
-    },
+    config = function()
+      local opts = { multiline_threshold = 1, max_lines = 3 }
+      require('treesitter-context').setup(opts)
+
+      vim.keymap.set('n', '<leader>tc', '<cmd>TSContextToggle<cr>', { desc = '[T]oggle [C]ontex' })
+    end,
   },
 }

@@ -244,6 +244,7 @@ require('lazy').setup({
       spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
+        { '<leader>o', group = 'C[O]mpiTest' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>w', group = '[W]orkspace' },
@@ -536,16 +537,7 @@ require('lazy').setup({
         -- clangd = {},
         gopls = {},
         -- ruff = {},
-        pylsp = {
-          settings = {
-            pylsp = {
-              plugins = {
-                yapf = { enabled = false },
-                autopep8 = { enabled = false },
-              },
-            },
-          },
-        },
+        pylsp = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -591,7 +583,6 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'fixjson',
         'golines',
-        'black',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -649,7 +640,6 @@ require('lazy').setup({
         lua = { 'stylua' },
         go = { 'golines' },
         json = { 'fixjson' },
-        python = { 'black' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --

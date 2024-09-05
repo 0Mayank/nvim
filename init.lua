@@ -1,3 +1,9 @@
+-- neovide settings
+if vim.g.neovide then
+  vim.g.neovide_scroll_animation_length = 0.1
+  vim.g.neovide_fullscreen = true
+end
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)

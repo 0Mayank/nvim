@@ -544,7 +544,7 @@ require('lazy').setup({
         gopls = {},
         -- ruff = {},
         pylsp = {},
-        rust_analyzer = {},
+        -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -571,7 +571,7 @@ require('lazy').setup({
       }
 
       local do_not_setup = {
-        -- rust_analyzer = true
+        rust_analyzer = true,
       }
 
       -- Ensure the servers and tools above are installed

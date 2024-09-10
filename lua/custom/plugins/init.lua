@@ -4,6 +4,12 @@
 -- See the kickstart.nvim README for more information
 return {
   {
+    'mrcjkb/rustaceanvim',
+    version = '^5', -- Recommended
+    lazy = false, -- This plugin is already lazy
+  },
+
+  {
     'kdheepak/lazygit.nvim',
     cmd = {
       'LazyGit',
@@ -22,6 +28,7 @@ return {
       { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
     },
   },
+
   {
     'nvim-treesitter/nvim-treesitter-context',
     config = function()
@@ -31,6 +38,7 @@ return {
       vim.keymap.set('n', '<leader>tc', '<cmd>TSContextToggle<cr>', { desc = '[T]oggle [C]ontex' })
     end,
   },
+
   {
     'fei6409/log-highlight.nvim',
     config = function()

@@ -22,7 +22,7 @@ return {
 
     { '<leader>oa', '<cmd>CompetiTest add_testcase<cr>', desc = 'C[O]mpiTest [A]dd Testcase' },
     { '<leader>oe', '<cmd>CompetiTest edit_testcase<cr>', desc = 'C[O]mpiTest [E]dit Testcase' },
-    { '<leader>od', '<cmd>CompetiTest delete_testcase<cr>', desc = 'C[O]mpiTest [D]elete Testcase' },
+    { '<leader>odd', '<cmd>CompetiTest delete_testcase<cr>', desc = 'C[O]mpiTest [D]elete Testcase' },
 
     {
       '<leader>ocs',

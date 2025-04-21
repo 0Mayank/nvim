@@ -460,7 +460,7 @@ require('lazy').setup({
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          map('gtd', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype [D]efinition')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
@@ -590,6 +590,8 @@ require('lazy').setup({
         'fixjson',
         'golines',
         'clang-format',
+        'sqlfluff',
+        'sleek',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -649,6 +651,7 @@ require('lazy').setup({
         json = { 'fixjson' },
         c = { 'clang-format' },
         cpp = { 'clang-format' },
+        sql = { 'sleek' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -869,7 +872,7 @@ require('lazy').setup({
   --
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps

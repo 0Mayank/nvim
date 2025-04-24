@@ -3,11 +3,11 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-  {
-    'mrcjkb/rustaceanvim',
-    version = '^5', -- Recommended
-    lazy = false, -- This plugin is already lazy
-  },
+  -- {
+  --   'mrcjkb/rustaceanvim',
+  --   version = '^5', -- Recommended
+  --   lazy = false, -- This plugin is already lazy
+  -- },
 
   {
     'kdheepak/lazygit.nvim',
@@ -44,5 +44,26 @@ return {
     config = function()
       require('log-highlight').setup {}
     end,
+  },
+
+  {
+    'kevinhwang91/nvim-bqf',
+    ft = 'qf',
+  },
+
+  {
+    'junegunn/fzf',
+    run = function()
+      vim.fn['fzf#install']()
+    end,
+  },
+
+  {
+    'stevearc/quicker.nvim',
+    lazy = false,
+    event = 'FileType qf',
+    ---@module "quicker"
+    ---@type quicker.SetupOptions
+    opts = {},
   },
 }

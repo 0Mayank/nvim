@@ -66,4 +66,22 @@ return {
     ---@type quicker.SetupOptions
     opts = {},
   },
+
+  'tpope/vim-fugitive',
+
+  {
+    'sindrets/diffview.nvim',
+    lazy = false,
+    opts = {
+      view = {
+        merge_tool = {
+          -- Config for conflicted files in diff views during a merge or rebase.
+          layout = 'diff3_vertical',
+        },
+      },
+      file_panel = {
+        listing_style = 'list',
+      },
+    },
+  },
 }

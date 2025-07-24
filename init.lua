@@ -4,6 +4,13 @@ if vim.g.neovide then
   vim.g.neovide_fullscreen = true
 end
 
+-- custom file type
+vim.filetype.add {
+  filename = {
+    ['nurfile'] = 'nu',
+  },
+}
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -18,6 +25,8 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 vim.opt.tabstop = 4
+
+vim.opt.wrap = false
 
 -- Make line numbers default
 vim.opt.number = true
@@ -174,41 +183,6 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
-  --
-
-  -- Alternatively, use `config = function() ... end` for full control over the configuration.
-  -- If you prefer to call `setup` explicitly, use:
-  --    {
-  --        'lewis6991/gitsigns.nvim',
-  --        config = function()
-  --            require('gitsigns').setup({
-  --                -- Your gitsigns configuration here
-  --            })
-  --        end,
-  --    }
-  --
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`.
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -412,8 +386,6 @@ require('lazy').setup({
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
-      'saghen/blink.cmp',
-
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
@@ -422,7 +394,19 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim', opts = {} },
+      {
+        'j-hui/fidget.nvim',
+        opts = {
+          notification = {
+            override_vim_notify = false,
+            window = {
+              winblend = 0,
+              border = 'rounded',
+              max_width = 50,
+            },
+          },
+        },
+      },
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
@@ -636,9 +620,14 @@ require('lazy').setup({
         },
       }
 
-      local do_not_setup = {
-        rust_analyzer = true,
+      local custom = {
+        rust_analyzer = {},
+        nushell = {},
       }
+
+      for k, v in pairs(custom) do
+        require('lspconfig')[k].setup(v)
+      end
 
       -- Ensure the servers and tools above are installed
       --
@@ -659,7 +648,6 @@ require('lazy').setup({
         'fixjson',
         'golines',
         'clang-format',
-        'sqlfluff',
         'sleek',
         'beautysh',
       })
@@ -670,9 +658,6 @@ require('lazy').setup({
         automatic_installation = false,
         handlers = {
           function(server_name)
-            if do_not_setup[server_name] == true then
-              return
-            end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
@@ -790,10 +775,44 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
-
+        preset = 'none',
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        ['<C-e>'] = { 'hide' },
+        ['<C-y>'] = { 'select_and_accept' },
+
+        ['<Up>'] = { 'select_prev', 'fallback' },
+        ['<Down>'] = { 'select_next', 'fallback' },
+        ['<C-p>'] = { 'select_prev', 'fallback_to_mappings' },
+        ['<C-n>'] = { 'select_next', 'fallback_to_mappings' },
+
+        ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
+        ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
+
+        ['<C-l>'] = {
+          function(cmp)
+            if vim.fn.mode() == 'i' then
+              cmp.snippet_forward()
+              return true
+            end
+            return false
+          end,
+          'fallback',
+        },
+        ['<C-h>'] = {
+
+          function(cmp)
+            if vim.fn.mode() == 'i' then
+              cmp.snippet_backward()
+              return true
+            end
+            return false
+          end,
+          'fallback',
+        },
+
+        ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
       },
 
       appearance = {
@@ -805,7 +824,16 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = {
+          auto_show = false,
+          auto_show_delay_ms = 500,
+          -- window = {
+          --   winblend = 0,
+          --   border = 'rounded',
+          -- },
+        },
+
+        menu = { border = nil, winblend = 0 },
       },
 
       sources = {
@@ -860,6 +888,9 @@ require('lazy').setup({
         },
         overrides = function(colors) -- add/modify highlights
           local theme = colors.theme
+          -- set default border for all floating windows
+          -- vim.o.winborder = 'rounded'
+
           return {
             NormalFloat = { bg = 'none' },
             FloatBorder = { bg = 'none' },
@@ -882,6 +913,18 @@ require('lazy').setup({
             TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = 'none' },
             TelescopePreviewNormal = { bg = 'none' },
             TelescopePreviewBorder = { bg = 'none', fg = theme.ui.bg_dim },
+
+            -- Dark pop up menu
+            -- add `blend = vim.o.pumblend` to enable transparency
+            Pmenu = { fg = theme.ui.shade0, bg = theme.ui.bg_p1, blend = vim.o.pumblend },
+            PmenuSel = { fg = 'NONE', bg = theme.ui.bg_p2 },
+            PmenuSbar = { bg = theme.ui.bg_m1 },
+            PmenuThumb = { bg = theme.ui.bg_p2 },
+
+            -- Pmenu = { fg = theme.ui.shade0, bg = 'none', blend = vim.o.pumblend },
+            -- PmenuSel = { fg = 'NONE', bg = 'none' },
+            -- PmenuSbar = { bg = 'none' },
+            -- PmenuThumb = { bg = 'none' },
           }
         end,
         theme = 'wave', -- Load "wave" theme
@@ -978,7 +1021,7 @@ require('lazy').setup({
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
-  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
